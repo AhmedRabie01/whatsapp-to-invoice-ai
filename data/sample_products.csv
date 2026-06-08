@@ -1,0 +1,7 @@
+sku,name,description,category,unit_price,unit_type,is_active
+MED-PANADOL,Panadol 500mg,Standard pain relief tablets,pharmacy,12.50,box,true
+MED-VITC,Vitamin C 1000mg,Immune support supplement,pharmacy,24.00,box,true
+CLN-APT2,2 Bedroom Apartment Cleaning,General cleaning service for apartments,cleaning,220.00,service,true
+CLN-DEEP,Deep Cleaning Add-on,Optional deeper cleaning package,cleaning,120.00,service,true
+MNT-AC-DIAG,AC Diagnostic Visit,Inspection and diagnosis for AC issues,maintenance,180.00,service,true
+MNT-AC-REPAIR,AC Repair Labor,Standard labor charge for AC repairs,maintenance,250.00,service,true
