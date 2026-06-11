@@ -7,6 +7,7 @@ from app.repositories.customer_repository import CustomerRepository
 from app.repositories.invoice_repository import InvoiceRepository
 from app.repositories.message_repository import MessageRepository
 from app.repositories.order_repository import OrderRepository
+from app.repositories.task_repository import TaskRepository
 from app.schemas.ai import MessageExtractionRequest
 from app.schemas.pricing import (
     CommercialWorkflowRequest,
@@ -14,10 +15,12 @@ from app.schemas.pricing import (
     DraftDocumentSummary,
     DraftOrderSummary,
 )
+from app.schemas.task import TaskRead
 from app.services.catalog_matching import CatalogMatchingService
 from app.services.invoice_rendering import InvoiceRenderingService
 from app.services.message_processing import MessageProcessingService
 from app.services.pricing import PricingService
+from app.services.task_generation import TaskGenerationService
 
 
 class OrderWorkflowService:
@@ -27,10 +30,12 @@ class OrderWorkflowService:
         self.message_repository = MessageRepository(db)
         self.order_repository = OrderRepository(db)
         self.invoice_repository = InvoiceRepository(db)
+        self.task_repository = TaskRepository(db)
         self.catalog_matching_service = CatalogMatchingService(db)
         self.pricing_service = PricingService()
         self.message_processing_service = MessageProcessingService()
         self.invoice_rendering_service = InvoiceRenderingService()
+        self.task_generation_service = TaskGenerationService(self.task_repository)
 
     def process_message_to_document(
         self,
@@ -88,6 +93,17 @@ class OrderWorkflowService:
             total_amount=pricing.total_amount,
         )
 
+        generated_tasks = self.task_generation_service.generate_tasks(
+            customer=customer,
+            order_id=order.id,
+            message_id=message.id,
+            extraction=extraction,
+            matched_items=matched_items,
+            unmatched_items=unmatched_items,
+            document_type=document_type,
+            has_customer_phone=bool(customer.phone),
+        )
+
         self.db.commit()
         self.db.refresh(order)
         self.db.refresh(document)
@@ -122,6 +138,10 @@ class OrderWorkflowService:
                 total_amount=document.total_amount,
                 issue_date=document.issue_date,
             ),
+            generated_tasks=[
+                TaskRead.model_validate(task)
+                for task in generated_tasks
+            ],
             invoice_html=invoice_html,
             suggested_customer_reply=self._build_customer_reply(
                 customer_name=customer.full_name,

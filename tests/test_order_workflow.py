@@ -88,4 +88,13 @@ def test_order_workflow_endpoint_creates_draft_document() -> None:
     assert data["matched_items"][0]["sku"] == "MNT-AC-DIAG"
     assert data["pricing"]["total_amount"] == "180.00"
     assert data["document"]["document_type"] == "invoice"
+    assert len(data["generated_tasks"]) >= 2
+    assert data["generated_tasks"][0]["task_type"] in {
+        "service_coordination",
+        "customer_follow_up",
+        "missing_contact",
+        "manual_review",
+    }
+    titles = {task["title"] for task in data["generated_tasks"]}
+    assert "Confirm technician availability" in titles
     assert "Ahmed Demo" in data["invoice_html"]

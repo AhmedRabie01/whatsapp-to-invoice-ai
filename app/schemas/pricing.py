@@ -4,6 +4,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.ai import MessageExtractionResponse
+from app.schemas.task import TaskRead
 
 
 class CommercialWorkflowRequest(BaseModel):
@@ -67,5 +68,6 @@ class CommercialWorkflowResponse(BaseModel):
     pricing: PricingBreakdown
     order: DraftOrderSummary
     document: DraftDocumentSummary
+    generated_tasks: list[TaskRead] = Field(default_factory=list)
     invoice_html: str
     suggested_customer_reply: str
