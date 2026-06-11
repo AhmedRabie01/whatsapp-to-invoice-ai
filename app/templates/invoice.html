@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ invoice.document_type|title }} {{ invoice.invoice_number }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #1f2937;
+      margin: 32px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .meta, .customer {
+      line-height: 1.6;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+    }
+    th, td {
+      border-bottom: 1px solid #d1d5db;
+      padding: 12px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    .totals {
+      margin-top: 24px;
+      width: 320px;
+      margin-left: auto;
+    }
+    .totals div {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+    .grand-total {
+      font-weight: bold;
+      border-top: 2px solid #111827;
+      margin-top: 8px;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">{{ invoice.document_type }}</div>
+      <div class="meta">
+        <div>Number: {{ invoice.invoice_number }}</div>
+        <div>Status: {{ invoice.status }}</div>
+        <div>Issue Date: {{ invoice.issue_date.strftime("%Y-%m-%d") }}</div>
+      </div>
+    </div>
+    <div class="customer">
+      <div><strong>Customer</strong></div>
+      <div>{{ customer.full_name }}</div>
+      {% if customer.phone %}
+      <div>{{ customer.phone }}</div>
+      {% endif %}
+      {% if customer.email %}
+      <div>{{ customer.email }}</div>
+      {% endif %}
+      {% if customer.location %}
+      <div>{{ customer.location }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Line Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.items %}
+      <tr>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>AED {{ "%.2f"|format(item.unit_price) }}</td>
+        <td>AED {{ "%.2f"|format(item.line_total) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div><span>Subtotal</span><span>AED {{ "%.2f"|format(invoice.subtotal) }}</span></div>
+    <div><span>Delivery Fee</span><span>AED {{ "%.2f"|format(invoice.delivery_fee) }}</span></div>
+    <div><span>Tax</span><span>AED {{ "%.2f"|format(invoice.tax_amount) }}</span></div>
+    <div class="grand-total"><span>Total</span><span>AED {{ "%.2f"|format(invoice.total_amount) }}</span></div>
+  </div>
+</body>
+</html>
