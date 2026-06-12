@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SME Workflow Console</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark">SME</div>
+        <div>
+          <p class="eyebrow">Operator Console</p>
+          <h1>Workflow System</h1>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-link is-active" data-panel="overview">Command Center</button>
+        <button class="nav-link" data-panel="workspace">Live Workspace</button>
+        <button class="nav-link" data-panel="documents">Documents</button>
+        <button class="nav-link" data-panel="tasks">Tasks</button>
+        <button class="nav-link" data-panel="automation">Automation</button>
+      </nav>
+
+      <section class="sidebar-section">
+        <p class="section-title">Workflow Notes</p>
+        <ul class="checklist">
+          <li>Process inbound requests into commercial drafts</li>
+          <li>Resolve high-priority follow-up tasks quickly</li>
+          <li>Generate the daily report before end-of-day dispatch</li>
+        </ul>
+      </section>
+
+      <section class="sidebar-section secret-box">
+        <p class="section-title">Automation Secret</p>
+        <input id="webhook-secret" type="password" placeholder="x-webhook-secret">
+        <small>Used only for the automation trigger action.</small>
+      </section>
+    </aside>
+
+    <main class="main-content">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">AI BUSINESS AUTOMATION</p>
+          <h2>From customer message to invoice, tasks, and daily automation</h2>
+          <p class="hero-copy">
+            Operate the full workflow from one console: intake customer requests, review commercial output,
+            monitor follow-up tasks, and trigger reporting automation.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="refresh-dashboard" class="ghost-button">Refresh Live Data</button>
+          <a class="ghost-button secondary" href="/docs" target="_blank" rel="noreferrer">Open API Docs</a>
+        </div>
+      </header>
+
+      <section class="metrics-grid" id="metrics-grid"></section>
+
+      <section class="panel-grid" id="overview-panel" data-panel-content="overview">
+        <article class="glass-card span-8">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Operational Snapshot</p>
+              <h3>Recent customer intake</h3>
+            </div>
+            <span class="pill">Live</span>
+          </div>
+          <div id="recent-messages" class="table-wrap"></div>
+        </article>
+
+        <article class="glass-card span-4">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Task Focus</p>
+              <h3>Priority breakdown</h3>
+            </div>
+          </div>
+          <div id="task-summary" class="stat-stack"></div>
+        </article>
+
+        <article class="glass-card span-12">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Workflow stages</p>
+              <h3>How the system operates</h3>
+            </div>
+          </div>
+          <div class="stage-grid">
+            <div class="stage-card">
+              <h4>1. Intake</h4>
+              <p>AI extracts intent, items, dates, locations, and missing information from customer messages.</p>
+            </div>
+            <div class="stage-card">
+              <h4>2. Commerce</h4>
+              <p>Catalog matching and pricing create draft orders and invoices or quotations.</p>
+            </div>
+            <div class="stage-card">
+              <h4>3. Operations</h4>
+              <p>Automated task generation flags everything staff must follow up on.</p>
+            </div>
+            <div class="stage-card">
+              <h4>4. Reporting</h4>
+              <p>Daily reports and automation logs capture the business summary for dispatch.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-grid hidden" id="workspace-panel" data-panel-content="workspace">
+        <article class="glass-card span-5">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Inbound Workflow</p>
+              <h3>Submit a live message</h3>
+            </div>
+          </div>
+          <form id="workflow-form" class="stack-form">
+            <label>
+              Customer message
+              <textarea id="message-text" rows="6" placeholder="I need cleaning for a 2-bedroom apartment tomorrow in Dubai Marina. How much?"></textarea>
+            </label>
+            <div class="field-row">
+              <label>
+                Customer name
+                <input id="customer-name" type="text" placeholder="Sara Demo">
+              </label>
+              <label>
+                Phone
+                <input id="customer-phone" type="text" placeholder="+971500000123">
+              </label>
+            </div>
+            <div class="field-row">
+              <label>
+                Email
+                <input id="customer-email" type="email" placeholder="owner@example.com">
+              </label>
+              <label>
+                Document type
+                <select id="document-type">
+                  <option value="">Auto</option>
+                  <option value="invoice">Invoice</option>
+                  <option value="quotation">Quotation</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Run Workflow</button>
+          </form>
+        </article>
+
+        <article class="glass-card span-7">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Workflow Output</p>
+              <h3>Commercial result</h3>
+            </div>
+          </div>
+          <div id="workflow-result" class="empty-state">
+            Run a message through the system to preview extraction, matched items, pricing, generated tasks, and invoice HTML.
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-grid hidden" id="documents-panel" data-panel-content="documents">
+        <article class="glass-card span-12">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Commercial Output</p>
+              <h3>Recent invoices and quotations</h3>
+            </div>
+          </div>
+          <div id="documents-table" class="table-wrap"></div>
+        </article>
+      </section>
+
+      <section class="panel-grid hidden" id="tasks-panel" data-panel-content="tasks">
+        <article class="glass-card span-7">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Operations Queue</p>
+              <h3>Latest follow-up tasks</h3>
+            </div>
+          </div>
+          <div id="tasks-table" class="table-wrap"></div>
+        </article>
+        <article class="glass-card span-5">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Catalog View</p>
+              <h3>Products and services</h3>
+            </div>
+          </div>
+          <div id="products-table" class="table-wrap compact"></div>
+        </article>
+      </section>
+
+      <section class="panel-grid hidden" id="automation-panel" data-panel-content="automation">
+        <article class="glass-card span-5">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Daily Reporting</p>
+              <h3>Generate or dispatch</h3>
+            </div>
+          </div>
+          <form id="report-form" class="stack-form">
+            <label>
+              Report date
+              <input id="report-date" type="date">
+            </label>
+            <div class="field-row">
+              <label class="toggle-row">
+                <input id="send-email" type="checkbox">
+                <span>Send email from FastAPI</span>
+              </label>
+            </div>
+            <label>
+              Recipient email
+              <input id="report-email" type="email" placeholder="owner@example.com">
+            </label>
+            <div class="action-row">
+              <button class="primary-button" type="submit">Trigger Automation</button>
+              <button class="ghost-button" id="generate-report-only" type="button">Generate Only</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="glass-card span-7">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Automation Result</p>
+              <h3>Dispatch feedback</h3>
+            </div>
+          </div>
+          <div id="automation-result" class="empty-state">
+            Use the form to trigger a report generation or n8n-style automation run.
+          </div>
+        </article>
+
+        <article class="glass-card span-6">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Daily Reports</p>
+              <h3>Stored summaries</h3>
+            </div>
+          </div>
+          <div id="reports-table" class="table-wrap"></div>
+        </article>
+
+        <article class="glass-card span-6">
+          <div class="card-head">
+            <div>
+              <p class="section-title">Automation Logs</p>
+              <h3>Dispatch history</h3>
+            </div>
+          </div>
+          <div id="automation-table" class="table-wrap"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>

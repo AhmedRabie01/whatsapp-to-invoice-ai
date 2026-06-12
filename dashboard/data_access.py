@@ -10,6 +10,18 @@ class DashboardDataAccess:
     def __init__(self, db: Session) -> None:
         self.db = db
 
+    def get_dashboard_payload(self) -> dict[str, object]:
+        return {
+            "metrics": self.get_overview_metrics(),
+            "messages": self.get_recent_messages(limit=20),
+            "orders": self.get_recent_orders(limit=20),
+            "documents": self.get_recent_documents(limit=20),
+            "tasks": self.get_recent_tasks(limit=20),
+            "products": self.get_products(limit=100),
+            "reports": self.get_daily_reports(limit=20),
+            "automation_logs": self.get_automation_logs(limit=20),
+        }
+
     def get_overview_metrics(self) -> dict[str, object]:
         total_messages = self.db.query(func.count(Message.id)).scalar() or 0
         total_orders = self.db.query(func.count(Order.id)).scalar() or 0
