@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DailyReportBase(BaseModel):
@@ -44,3 +44,38 @@ class AutomationLogRead(AutomationLogBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DailyReportRequest(BaseModel):
+    report_date: date | None = None
+
+
+class DailyReportResponse(BaseModel):
+    report: DailyReportRead
+    open_tasks: int
+
+
+class SendDailyReportRequest(BaseModel):
+    report_date: date | None = None
+    recipient_email: str
+
+
+class SendDailyReportResponse(BaseModel):
+    report: DailyReportRead
+    open_tasks: int
+    recipient_email: str
+    email_sent: bool
+    automation_log: AutomationLogRead
+
+
+class AutomationDailyReportRequest(BaseModel):
+    report_date: date | None = None
+    recipient_email: str | None = None
+    send_email: bool = True
+
+
+class AutomationDailyReportResponse(BaseModel):
+    report: DailyReportRead
+    open_tasks: int
+    email_sent: bool
+    automation_logs: list[AutomationLogRead] = Field(default_factory=list)
