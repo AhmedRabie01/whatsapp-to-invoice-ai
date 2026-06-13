@@ -1,147 +1,247 @@
 # WhatsApp-to-Invoice AI Workflow System
 
-An AI workflow product demo for SMEs that turns customer messages into structured business actions: extraction, pricing, invoices or quotations, follow-up tasks, daily reports, and automation-ready outputs.
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![AI](https://img.shields.io/badge/AI-Workflow-orange)
+![Testing](https://img.shields.io/badge/Testing-Pytest-success)
 
-## Product Summary
+An AI-powered operations assistant for SMEs that transforms customer conversations into structured business workflows.
 
-This system is designed for teams that receive customer requests over WhatsApp-like channels and want a lightweight operational workflow instead of manual message handling.
+The system extracts customer requests, identifies products or services, calculates pricing, generates invoices or quotations, creates follow-up tasks, and provides automated reporting.
 
-Core flow:
+<p align="center">
+  <img src="photo/whatsapp%20project.png" width="850"/>
+</p>
 
-Customer message  
--> AI extraction  
--> product or service matching  
--> pricing  
--> draft invoice or quotation  
--> operational task generation  
--> dashboard visibility  
--> daily report and automation dispatch
+<p align="center">
+  <img src="photo/whatsapp%20project%201.png" width="850"/>
+</p>
 
-## What It Does
 
-- Understands inbound customer requests with a replaceable AI provider layer
-- Extracts intent, items or services, dates, locations, and missing information
-- Matches extracted requests against a catalog of products or services
-- Calculates subtotal, delivery fee, tax placeholder, and total
-- Creates draft orders and invoices or quotations
-- Generates internal follow-up tasks automatically
-- Exposes a product-style operator UI at `/ui`
-- Provides daily report generation and automation logging
-- Supports n8n-triggered automation for daily reporting
+# Problem
 
-## Business Scenarios Included
+Many small businesses receive customer requests through WhatsApp-like channels but still manually:
 
-- Pharmacy order workflow
-- Cleaning quotation workflow
-- Maintenance service request workflow
+- Read and understand customer messages
+- Identify requested products or services
+- Prepare quotations
+- Calculate prices
+- Create invoices
+- Assign follow-up tasks
+- Prepare daily operational reports
 
-These scenarios are implemented as domain-specific behavior on top of one shared workflow core.
+This creates delays, repetitive work, and inconsistent processes.
 
-## Architecture
+# Solution
 
-Backend:
+This project introduces an AI workflow layer that converts unstructured customer conversations into structured business operations.
 
-- `FastAPI` for API endpoints and frontend hosting
-- `SQLAlchemy` for data persistence
-- `SQLite` for local/demo storage
-- `Jinja2` for invoice HTML rendering
-- `pydantic-settings` for environment-driven configuration
+The system acts as a lightweight AI business assistant that connects customer communication with internal operations.
 
-Frontend:
+# Workflow Overview
 
-- Product-style HTML/CSS/JavaScript operator console served by FastAPI at `/ui`
-- Optional Streamlit dashboard kept in the repo as an internal demo surface
+```mermaid
+flowchart LR
+    A[Customer Message] --> B[AI Extraction]
+    B --> C[Product / Service Matching]
+    C --> D[Pricing Engine]
+    D --> E[Invoice or Quotation Generation]
+    E --> F[Follow-up Task Creation]
+    F --> G[Dashboard Visibility]
+    G --> H[Daily Reports & Automation]
+```
 
-Automation:
+# Key Capabilities
 
-- SMTP email dispatch for daily reports
-- n8n integration via protected automation endpoints
+## AI Message Understanding
 
-Testing:
+- Extracts customer intent from messages
+- Identifies products or services
+- Extracts dates, locations, quantities, and missing information
+- Supports replaceable AI provider architecture
 
-- `pytest`
+## Business Workflow Automation
 
-## Main Interfaces
+- Matches requests against product/service catalogs
+- Calculates:
+  - Subtotal
+  - Delivery fees
+  - Tax placeholders
+  - Final totals
+- Creates draft orders
+- Generates invoices or quotations
+- Creates internal follow-up tasks automatically
 
-Operator UI:
+## Operations Dashboard
 
-- `GET /ui`
+- Product-style operator interface
+- Workflow visibility
+- Order tracking
+- Reporting support
 
-API:
+## Automation
 
-- `GET /health`
-- `POST /messages/extract`
-- `POST /orders/from-message`
-- `POST /reports/generate`
-- `POST /reports/send`
-- `POST /automation/daily-report`
+- Daily report generation
+- SMTP email dispatch
+- n8n automation integration
+- Protected automation endpoints
 
-Interactive docs:
 
-- `GET /docs`
+# Supported Business Use Cases
 
-## Project Structure
+The workflow core supports multiple SME scenarios:
 
-```text
+### Pharmacy Orders
+
+Customer request → product matching → pricing → invoice workflow
+
+### Cleaning Services
+
+Customer requirements → quotation generation → follow-up task creation
+
+### Maintenance Services
+
+Service request → information extraction → operational workflow
+
+These scenarios are implemented as domain-specific behavior on top of a shared workflow engine.
+
+
+# Architecture
+
+## Backend
+
+- FastAPI API framework
+- SQLAlchemy ORM
+- SQLite database for local/demo usage
+- Jinja2 invoice template rendering
+- Pydantic settings management
+
+## Frontend
+
+- HTML/CSS/JavaScript operator console
+- Served directly through FastAPI
+- Optional Streamlit dashboard for internal demonstrations
+
+## Automation Layer
+
+- n8n workflow integration
+- SMTP email reporting
+- Automation-ready API endpoints
+
+## Testing
+
+- pytest automated test suite
+
+
+# Main Interfaces
+
+## Operator Interface
+
+```
+GET /ui
+```
+
+## API Endpoints
+
+```
+GET  /health
+
+POST /messages/extract
+
+POST /orders/from-message
+
+POST /reports/generate
+
+POST /reports/send
+
+POST /automation/daily-report
+```
+
+## API Documentation
+
+```
+GET /docs
+```
+
+
+# Project Structure
+
+```
 app/
-  api/routes/
-  ai/providers/
-  core/
-  models/
-  repositories/
-  schemas/
-  services/
-  templates/
+ ├── api/routes/
+ ├── ai/providers/
+ ├── core/
+ ├── models/
+ ├── repositories/
+ ├── schemas/
+ ├── services/
+ └── templates/
+
 dashboard/
+
 data/
+
 frontend/
+
 n8n/
+
 tests/
 ```
 
-## Local Run
 
-### 1. Create environment
+# Local Installation
+
+## 1. Create Environment
 
 ```powershell
 conda create -n env-workflow python=3.11 -y
+
 conda activate env-workflow
+
 pip install -r requirements.txt
 ```
 
-### 2. Configure environment variables
+
+## 2. Configure Environment Variables
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Update `.env` with real values for:
+Update `.env`:
 
-- `API_KEY`
-- `N8N_WEBHOOK_SECRET`
-- SMTP settings if email sending is required
+```
+API_KEY=
+N8N_WEBHOOK_SECRET=
+SMTP settings
+```
 
-### 3. Start the API
+
+## 3. Start Application
 
 ```powershell
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 4. Open the operator UI
 
-```text
+## 4. Open Operator UI
+
+```
 http://127.0.0.1:8000/ui
 ```
 
-### 5. Optional Streamlit dashboard
+
+## 5. Optional Dashboard
 
 ```powershell
 python -m streamlit run dashboard\streamlit_app.py
 ```
 
-## Docker Run
 
-Build:
+# Docker Deployment
+
+Build image:
 
 ```powershell
 docker build -t whatsapp-to-invoice-ai .
@@ -153,97 +253,131 @@ Run:
 docker run --rm -p 8000:8000 --env-file .env whatsapp-to-invoice-ai
 ```
 
-Notes:
+The Docker setup is optimized for API and product UI serving.
 
-- The included Docker image is optimized for API + product UI serving.
-- SQLite inside the container is ephemeral unless you bind-mount storage.
-- For persistent demo data, mount a host directory and point `DATABASE_URL` to that path.
-
-Example with mounted SQLite file:
+For persistent database storage:
 
 ```powershell
-docker run --rm -p 8000:8000 --env-file .env -v ${PWD}\runtime:/runtime whatsapp-to-invoice-ai
+docker run --rm \
+-p 8000:8000 \
+--env-file .env \
+-v ${PWD}\runtime:/runtime \
+whatsapp-to-invoice-ai
 ```
 
-Then set:
+Database configuration:
 
-```env
+```
 DATABASE_URL=sqlite:////runtime/sme_ai_workflow.db
 ```
 
-## n8n Integration
 
-This project treats n8n as the orchestration layer, not the place where business logic lives.
+# n8n Integration
 
-Recommended pattern:
+n8n is used as the orchestration layer while business logic remains inside the application.
 
-1. n8n `Schedule Trigger`
-2. n8n `HTTP Request`
-3. Call `POST /automation/daily-report`
-4. Use header `x-webhook-secret`
+Recommended workflow:
+
+```
+n8n Schedule Trigger
+
+        ↓
+
+HTTP Request
+
+        ↓
+
+POST /automation/daily-report
+
+        ↓
+
+Daily Report Processing
+```
 
 Reference files:
 
-- [n8n/README.md](n8n/README.md)
-- [n8n/workflow_examples/daily-report-trigger.json](n8n/workflow_examples/daily-report-trigger.json)
+```
+n8n/README.md
 
-## Test Suite
+n8n/workflow_examples/daily-report-trigger.json
+```
 
-Run all automated tests:
+
+# Test Suite
+
+Run tests:
 
 ```powershell
 python -m pytest -q
 ```
 
-Current verified coverage includes:
+Verified coverage includes:
 
-- health endpoint
-- data models
-- AI message extraction
-- catalog matching
-- pricing
-- order and invoice workflow
-- task generation
-- dashboard data access
-- report generation
-- automation routes
-- product UI routes
+- Health endpoint
+- Database models
+- AI extraction workflow
+- Catalog matching
+- Pricing engine
+- Order creation
+- Invoice workflow
+- Task generation
+- Dashboard access
+- Report generation
+- Automation routes
+- Product UI routes
 
-## Product Positioning
 
-This repository is not intended as a tutorial scaffold.
+# Product Positioning
 
-It is positioned as:
+This project demonstrates a production-oriented AI workflow architecture designed for SME automation.
 
-- a portfolio-ready AI operations system
-- a freelance demo for SME workflow automation
-- a backend and automation case study
-- a base for future deployment on a lightweight VPS
+It can be used as:
 
-## Current Status
+- AI automation portfolio project
+- Freelance demonstration system
+- Backend engineering case study
+- SME workflow automation foundation
+- Lightweight VPS deployment solution
+
+
+# Production Readiness
 
 Implemented:
 
-- workflow ingestion and extraction
-- order and document generation
-- follow-up task automation
-- operator UI
-- daily reporting and n8n-ready automation
-- Docker packaging
+✅ AI workflow ingestion  
+✅ Message extraction  
+✅ Product/service matching  
+✅ Pricing engine  
+✅ Invoice and quotation workflow  
+✅ Follow-up task automation  
+✅ Operator UI  
+✅ Daily reporting  
+✅ n8n-ready automation  
+✅ Docker packaging  
+✅ Automated testing  
 
-Not yet implemented:
 
-- production authentication and user accounts
-- PostgreSQL deployment profile
-- PDF invoice rendering
-- background job scheduling inside the app
-- advanced analytics and audit dashboards
-- production-grade secrets management
+Future Improvements:
 
-## Recommended Next Steps
+- User authentication and role management
+- PostgreSQL production deployment
+- PDF invoice generation
+- Background job processing
+- Advanced analytics dashboard
+- Production secrets management
+- Cloud deployment configuration
 
-- Add user authentication and role-based access
-- Move persistence to PostgreSQL for hosted deployment
-- Add file storage or PDF export for invoices
-- Add a deployment manifest or `docker-compose.yml`
-- Finalize project docs in `docs/` for architecture and portfolio case study
+
+# Recommended Roadmap
+
+1. Add authentication and multi-company support
+
+2. Move database layer to PostgreSQL
+
+3. Add WhatsApp Business API integration
+
+4. Add PDF invoice generation
+
+5. Deploy using Docker Compose on a VPS
+
+6. Add analytics and customer behavior insights
